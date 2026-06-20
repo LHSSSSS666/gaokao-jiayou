@@ -1229,10 +1229,24 @@ window.addEventListener('mouseup',()=>{if(ir){ir=false;pip.classList.remove('res
 useCamera = false;
 document.getElementById('permission-btn').addEventListener('click', () => {
   document.getElementById('permission-overlay').classList.add('hidden');
-  const m = document.getElementById('bgm-audio');
-  const b = document.getElementById('bgm-bg');
-  if (m) m.play().catch(() => {});
-  if (b) b.play().catch(() => {});
+  function playAudio(id) {
+    const a = document.getElementById(id);
+    if (!a) return;
+    if (typeof WeixinJSBridge !== 'undefined') {
+      WeixinJSBridge.invoke('getNetworkType', {}, (res) => {
+        a.play().catch(() => {});
+      });
+    } else {
+      a.play().catch(() => {});
+    }
+  }
+  playAudio('bgm-audio');
+  playAudio('bgm-bg');
+  document.addEventListener('touchstart', function wxPlay() {
+    playAudio('bgm-audio');
+    playAudio('bgm-bg');
+    document.removeEventListener('touchstart', wxPlay);
+  });
 });
 
 // Resize
